@@ -2,28 +2,24 @@ from ultralytics import YOLO
 import cv2
 from datetime import datetime
 
-# ================= CONFIG =================
-MODEL_PATH = "best.pt"      # ganti ke lokasi best.pt kamu
-CAMERA_INDEX = 1            # DroidCam biasanya 1 atau 2
-CONF_THRESHOLD = 0.5
+MODEL_PATH = "best.pt"
+CAMERA_INDEX = 1
+CONF_THRESHOLD = 0.7
 IMG_SIZE = 640
-# ==========================================
 
 model = YOLO(MODEL_PATH)
 
-cap = cv2.VideoCapture(CAMERA_INDEX, cv2.CAP_DSHOW)
+cap = cv2.VideoCapture(CAMERA_INDEX)
 
 if not cap.isOpened():
-    print("[!] Kamera tidak terbuka.")
-    print("[!] Coba ganti CAMERA_INDEX ke 0, 1, 2, atau 3.")
+    print(f"[!] Kamera index {CAMERA_INDEX} tidak bisa dibuka.")
     exit()
 
-print("[+] Kamera berhasil dibuka.")
+print("[+] DroidCam aktif.")
 print("[+] Tekan Q untuk keluar.")
 
 while True:
     ret, frame = cap.read()
-
     if not ret:
         print("[!] Gagal membaca frame.")
         break
@@ -41,11 +37,9 @@ while True:
     deer_count = len(result.boxes)
 
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    info_text = f"{now} | Deer count: {deer_count}"
-
     cv2.putText(
         annotated_frame,
-        info_text,
+        f"{now} | Deer count: {deer_count}",
         (20, 40),
         cv2.FONT_HERSHEY_SIMPLEX,
         0.8,
